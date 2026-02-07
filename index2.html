@@ -1,0 +1,346 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Valentine’s Day</title>
+
+<style>
+*{box-sizing:border-box;font-family:Poppins,sans-serif}
+
+body{
+  margin:0;
+  overflow:hidden;
+  color:white;
+}
+body.dark{
+  background:radial-gradient(circle at top,#2a0018,#120010);
+}
+body.bright{
+  background:linear-gradient(135deg,#ffe0ec,#ffc1d9);
+}
+
+/* PARTICLES */
+canvas{
+  position:fixed;
+  inset:0;
+  z-index:0;
+  pointer-events:none;
+}
+
+/* SLIDES */
+.slide{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  z-index:1;
+}
+.hidden{display:none}
+
+/* ASK WRAPPER */
+.ask-wrap{
+  position:relative;
+  width:900px;
+  height:900px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+
+/* CARD */
+.card{
+  position:relative;
+  width:640px;
+  height:440px;
+  background:rgba(255,120,180,.18);
+  backdrop-filter:blur(14px);
+  border-radius:32px;
+  box-shadow:0 0 45px rgba(255,90,160,.6);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  z-index:5;
+}
+
+/* ORBIT */
+.orbit{
+  position:absolute;
+  width:900px;
+  height:900px;
+  animation:spin 30s linear infinite;
+  z-index:3;
+  pointer-events:none;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.polaroid{
+  position:absolute;
+  width:150px;
+  background:white;
+  padding:8px 8px 20px;
+  border-radius:8px;
+}
+.polaroid img{width:100%;border-radius:6px}
+
+.p1{top:0;left:50%;transform:translateX(-50%)}
+.p2{right:0;top:50%;transform:translateY(-50%)}
+.p3{bottom:0;left:50%;transform:translateX(-50%)}
+.p4{left:0;top:50%;transform:translateY(-50%)}
+
+/* BUTTONS */
+.buttons{display:flex;gap:20px}
+button{
+  border:none;
+  border-radius:22px;
+  padding:16px 28px;
+  font-size:1.15rem;
+  cursor:pointer;
+}
+#yes{
+  background:#ff1f8f;
+  color:white;
+  box-shadow:0 0 25px #ff1f8f;
+}
+#no{background:#333;color:white}
+
+/* NO AREA */
+#noArea img{
+  width:200px;
+  border-radius:14px;
+  margin-top:14px;
+}
+
+/* SLIDESHOW */
+#slideshow{
+  flex-direction:column;
+  gap:20px;
+}
+#slideshow img{
+  width:340px;
+  border-radius:18px;
+}
+
+/* VIDEO */
+.video-box{
+  width:360px;
+  aspect-ratio:4/3;
+  border-radius:18px;
+  overflow:hidden;
+}
+.video-box video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* SECRET MESSAGE */
+#secret{
+  margin-top:20px;
+  font-size:2rem;
+  letter-spacing:3px;
+  text-align:center;
+  font-family:"Courier New",monospace;
+  text-shadow:0 0 20px pink;
+}
+
+/* TOGGLE */
+.toggle{
+  position:fixed;
+  top:12px;
+  right:12px;
+  z-index:10;
+}
+.toggle button{
+  background:#ff4fa3;
+  color:white;
+  padding:8px 12px;
+  border-radius:16px;
+  border:none;
+}
+
+/* SIGNATURE */
+.signature{
+  position:fixed;
+  bottom:14px;
+  right:16px;
+  font-size:.85rem;
+  opacity:.75;
+  z-index:10;
+}
+</style>
+</head>
+
+<body class="dark">
+
+<canvas id="particles"></canvas>
+
+<div class="toggle">
+  <button onclick="toggleMode()">🌙 / 🌸</button>
+</div>
+
+<audio id="music1" src="music1.mp3" loop></audio>
+<audio id="music2" src="song1.mp3" loop></audio>
+
+<!-- ASK -->
+<div class="slide" id="ask">
+  <div class="ask-wrap">
+
+    <div class="orbit">
+      <div class="polaroid p1"><img src="p1.JPG"></div>
+      <div class="polaroid p2"><img src="p2.JPG"></div>
+      <div class="polaroid p3"><img src="p3.JPG"></div>
+      <div class="polaroid p4"><img src="p4.jpeg"></div>
+    </div>
+
+    <div class="card">
+      <h1>Prithvi,<br>Will you be my Valentine? 🎀</h1>
+
+      <div class="buttons">
+        <button id="yes">YES 🎀</button>
+        <button id="no">NO ☹️</button>
+      </div>
+
+      <div id="noArea"></div>
+    </div>
+  </div>
+</div>
+
+<!-- SLIDESHOW -->
+<div class="slide hidden" id="slideshow">
+  <img id="slideImg">
+  <button id="nextBtn" class="hidden">See what’s next 👀</button>
+</div>
+
+<!-- VIDEO -->
+<div class="slide hidden" id="video">
+  <div class="video-box">
+    <video id="vid" src="video.mp4.mp4"></video>
+  </div>
+  <div id="secret"></div>
+</div>
+
+<div class="signature">Made for Prithvi😛</div>
+
+<script>
+/* MUSIC */
+const music1=document.getElementById("music1");
+const music2=document.getElementById("music2");
+music1.play();
+
+/* YES / NO */
+const yes=document.getElementById("yes");
+const no=document.getElementById("no");
+const noArea=document.getElementById("noArea");
+
+let count=0;
+const noImgs=["n1.jpg","n2.JPG","n3.JPG","n4.png","n5.png","n6.JPG"];
+const noTexts=[
+  "That hurt mean lady 💔","Are you sure?I'll get u a daisy🥺",
+  "My heart’s waiting","Still saying no?","Last chance?",
+  "I told u i'll never give up 😘"
+];
+
+no.onclick=()=>{
+  if(count>=6)return;
+  noArea.innerHTML=`<img src="${noImgs[count]}"><p>${noTexts[count]}</p>`;
+  count++;
+  yes.style.transform=`scale(${1+count*0.25})`;
+  no.style.transform=`translateX(${count*28}px)`;
+  if(count===6){
+    no.style.display="none";
+    yes.style.position="absolute";
+    yes.style.inset="0";
+  }
+};
+
+yes.onclick=()=>{
+  music1.pause();
+  music2.play();
+  document.getElementById("ask").classList.add("hidden");
+  document.getElementById("slideshow").classList.remove("hidden");
+};
+
+/* SLIDESHOW */
+const slides=["s1.JPG","s2.JPG","s3.png"];
+let i=0;
+const slideImg=document.getElementById("slideImg");
+const nextBtn=document.getElementById("nextBtn");
+slideImg.src=slides[0];
+
+const slideInterval=setInterval(()=>{
+  i++;
+  if(i<slides.length){
+    slideImg.src=slides[i];
+  }else{
+    clearInterval(slideInterval);
+    nextBtn.classList.remove("hidden"); // 👀 appears AFTER slideshow
+  }
+},2500);
+
+nextBtn.onclick=()=>{
+  music2.pause(); // STOP slideshow music
+  document.getElementById("slideshow").classList.add("hidden");
+  document.getElementById("video").classList.remove("hidden");
+  document.getElementById("vid").play();
+};
+
+/* TYPEWRITER AFTER VIDEO */
+const message="I choose you. Always. 💖";
+const secret=document.getElementById("secret");
+const vid=document.getElementById("vid");
+
+vid.onended=()=>{
+  let j=0;
+  const typer=setInterval(()=>{
+    secret.textContent+=message[j++];
+    if(j>=message.length)clearInterval(typer);
+  },90);
+};
+
+/* PARTICLES */
+const canvas=document.getElementById("particles");
+const ctx=canvas.getContext("2d");
+function resize(){canvas.width=innerWidth;canvas.height=innerHeight}
+resize();onresize=resize;
+
+let mode="dark";
+let particles=[];
+function createParticles(){
+  particles=Array.from({length:70},()=>({
+    x:Math.random()*canvas.width,
+    y:Math.random()*canvas.height,
+    s:Math.random()*3+1,
+    v:Math.random()*0.6+0.2
+  }));
+}
+createParticles();
+
+function draw(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.fillStyle=mode==="dark"
+    ?"rgba(255,255,255,.9)"
+    :"rgba(255,140,180,.9)";
+  particles.forEach(p=>{
+    ctx.beginPath();
+    ctx.arc(p.x,p.y,p.s,0,Math.PI*2);
+    ctx.fill();
+    p.y+=p.v;
+    if(p.y>canvas.height)p.y=0;
+  });
+  requestAnimationFrame(draw);
+}
+draw();
+
+function toggleMode(){
+  mode=mode==="dark"?"bright":"dark";
+  document.body.className=mode;
+  createParticles();
+}
+</script>
+
+</body>
+</html>
