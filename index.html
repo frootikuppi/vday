@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Can We Start?</title>
+<title>Special Day</title>
 
 <style>
 :root{
@@ -53,8 +53,8 @@ body{
   top:50%;
   left:50%;
   transform:translate(-50%,-50%);
-  width:600px;
-  height:380px;
+  width:640px;
+  height:440px;
   background:var(--card);
   backdrop-filter:blur(16px);
   border-radius:32px;
@@ -93,7 +93,87 @@ button{
   color:white;
 }
 
-/* SIGNATURE */
+/* NO AREA */
+#noArea img{
+  width:200px;
+  border-radius:14px;
+  margin-top:14px;
+}
+
+/* SLIDES */
+.slide{
+  position:fixed;
+  inset:0;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.hidden{display:none}
+
+/* SLIDESHOW */
+#slideshow{
+  flex-direction:column;
+  gap:18px;
+}
+#slideshow img{
+  width:340px;
+  border-radius:18px;
+  box-shadow:0 0 25px var(--glow);
+}
+
+/* VIDEO */
+.video-box{
+  width:380px;
+  aspect-ratio:4/3;
+  border-radius:18px;
+  overflow:hidden;
+}
+.video-box video{
+  width:100%;
+  height:100%;
+  object-fit:cover;
+}
+
+/* SECRET */
+#secret{
+  font-size:1.8rem;
+  text-align:center;
+  animation:fade 1.4s ease forwards;
+}
+@keyframes fade{
+  from{opacity:0;transform:scale(.9)}
+  to{opacity:1;transform:scale(1)}
+}
+
+/* ORBIT POLAROIDS */
+.orbit{
+  position:absolute;
+  inset:-260px;
+  animation:spin 26s linear infinite;
+  z-index:-1;
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.polaroid{
+  position:absolute;
+  width:clamp(140px,18vw,170px);
+  background:white;
+  padding:10px 10px 22px;
+  border-radius:10px;
+  box-shadow:0 10px 25px rgba(0,0,0,.25);
+}
+.polaroid img{
+  width:100%;
+  height:auto;
+  border-radius:8px;
+}
+
+.p1{top:0;left:50%;transform:translateX(-50%) rotate(-6deg)}
+.p2{right:0;top:50%;transform:translateY(-50%) rotate(5deg)}
+.p3{bottom:0;left:50%;transform:translateX(-50%) rotate(7deg)}
+.p4{left:0;top:50%;transform:translateY(-50%) rotate(-5deg)}
+
+/* SECRET SIGNATURE */
 .signature{
   position:fixed;
   bottom:14px;
@@ -107,15 +187,58 @@ button{
 
 <button class="toggle" onclick="toggleMode()">🌙 / 🌸</button>
 
+<!-- AUDIOS -->
 <audio id="music1" src="music1.mp3" loop></audio>
+<audio id="song" src="song1.mp3" loop></audio>
 
-<!-- CAN WE START CARD -->
+<!-- CAN WE START -->
 <div class="card" id="startCard">
   <h1>Prithvi,<br>Can we start? 🎀</h1>
   <div class="buttons">
-    <button id="yes">YES 🎀</button>
-    <button id="no">NO ☹️</button>
+    <button id="startYes">YES 🎀</button>
+    <button id="startNo">NO ☹️</button>
   </div>
+</div>
+
+<!-- ASK -->
+<div class="slide hidden" id="ask">
+  <div class="card">
+
+    <div class="orbit">
+      <div class="polaroid p1"><img src="p1.JPG"></div>
+      <div class="polaroid p2"><img src="p2.JPG"></div>
+      <div class="polaroid p3"><img src="p3.png"></div>
+      <div class="polaroid p4"><img src="p4.jpeg"></div>
+    </div>
+
+    <h1>Prithvi,<br>Will you be my Valentine? 🎀</h1>
+
+    <div class="buttons">
+      <button id="yesAsk">YES 🎀</button>
+      <button id="noAsk">NO ☹️</button>
+    </div>
+
+    <div id="noArea"></div>
+  </div>
+</div>
+
+<!-- SLIDESHOW -->
+<div class="slide hidden" id="slideshow">
+  <img id="slideImg">
+  <button id="nextBtn">See what’s next 👀</button>
+</div>
+
+<!-- VIDEO -->
+<div class="slide hidden" id="video">
+  <div class="video-box">
+    <video id="vid" src="video.mp4"></video>
+  </div>
+</div>
+
+<!-- SECRET -->
+<div class="slide hidden" id="secret">
+ I love you so much, Prithvi.<br>
+ Happy Valentine's Day
 </div>
 
 <div class="signature">Made for Prithvi 😛</div>
@@ -126,18 +249,79 @@ function toggleMode(){
   document.body.classList.toggle("dark");
 }
 
-/* MUSIC ON YES */
-const yesBtn = document.getElementById("yes");
-const noBtn = document.getElementById("no");
+/* START CARD */
+const startCard = document.getElementById("startCard");
+const startYes = document.getElementById("startYes");
+const startNo = document.getElementById("startNo");
 const music1 = document.getElementById("music1");
 
-yesBtn.onclick = () => {
+startYes.onclick = () => {
   music1.play();
-  alert("Music started! 🎵"); // optional feedback
+  startCard.classList.add("hidden");
+  document.getElementById("ask").classList.remove("hidden");
 };
 
-noBtn.onclick = () => {
-  alert("Aww, maybe later 😢"); // optional feedback
+startNo.onclick = () => {
+  alert("Maybe later 😢");
+};
+
+/* YES / NO ASK */
+const yesAsk = document.getElementById("yesAsk");
+const noAsk = document.getElementById("noAsk");
+const noArea = document.getElementById("noArea");
+
+let count = 0;
+const noImgs=["n1.jpg","n2.JPG","n3.JPG","n4.png","n5.png","n6.JPG"];
+const noTexts=[
+  "That hurt 💔","Are you sure? 🥺","Still no?",
+  "You’re heartless huh","Last chance pleaseee?","I won't give up 😘"
+];
+
+noAsk.onclick = () => {
+  if(count >= 6) return;
+  noArea.innerHTML=`<img src="${noImgs[count]}"><p>${noTexts[count]}</p>`;
+  count++;
+  yesAsk.style.transform=`scale(${1+count*.25})`;
+  noAsk.style.transform=`translateX(${count*26}px)`;
+  if(count===6){
+    noAsk.style.display="none";
+    yesAsk.style.position="absolute";
+    yesAsk.style.inset="0";
+  }
+};
+
+/* SLIDESHOW + MUSIC */
+const song = document.getElementById("song");
+const slides = ["s1.JPG","s2.JPG","s3.png"];
+let i=0;
+const slideImg = document.getElementById("slideImg");
+
+yesAsk.onclick = () => {
+  document.getElementById("ask").classList.add("hidden");
+  document.getElementById("slideshow").classList.remove("hidden");
+  slideImg.src = slides[0];
+  song.play();
+};
+
+const loop = setInterval(()=>{
+  if(document.getElementById("slideshow").classList.contains("hidden")) return;
+  i = (i+1)%slides.length;
+  slideImg.src = slides[i];
+},2500);
+
+/* SEE WHAT'S NEXT */
+document.getElementById("nextBtn").onclick = () => {
+  song.pause();
+  song.currentTime = 0;
+  document.getElementById("slideshow").classList.add("hidden");
+  document.getElementById("video").classList.remove("hidden");
+  document.getElementById("vid").play();
+};
+
+/* VIDEO END */
+document.getElementById("vid").onended = () => {
+  document.getElementById("video").classList.add("hidden");
+  document.getElementById("secret").classList.remove("hidden");
 };
 </script>
 
