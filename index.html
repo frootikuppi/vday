@@ -12,17 +12,17 @@
   --text:#4a0036;
   --glow:#ff4fa3;
 }
-  /* HEARTS */
+  /* HEARTS (classic heart shape) */
 .heart {
   position: fixed;
   width: 12px;
   height: 12px;
   background-color: pink;
-  transform: rotate(45deg);
-  top: -10px;
+  top: -20px; /* start above screen */
   pointer-events: none;
   z-index: 20;
-  animation: fall linear infinite;
+  transform: rotate(45deg);
+  animation: fall linear forwards;
 }
 
 .heart::before,
@@ -34,6 +34,7 @@
   background-color: inherit;
   border-radius: 50%;
 }
+
 .heart::before { top: -6px; left: 0; }
 .heart::after { left: 6px; top: 0; }
 
@@ -54,10 +55,6 @@
   text-align: center;
   white-space: pre-wrap;
   overflow: hidden;
-  border-right: 2px solid var(--glow);
-  width: fit-content;
-  margin: 0 auto;
-  animation: none; /* we will do via JS */
 }
 
 
@@ -347,59 +344,61 @@ document.getElementById("nextBtn").onclick=()=>{
   document.getElementById("video").classList.remove("hidden");
   document.getElementById("vid").play();
 };
-/* VIDEO END + HEART RAIN + TYPEWRITER */
+/* VIDEO END + FALLING HEARTS + TYPEWRITER */
 document.getElementById("vid").onended = () => {
-  // Show secret message container
+  // Show secret message
   document.getElementById("video").classList.add("hidden");
   const secret = document.getElementById("secret");
   secret.classList.remove("hidden");
 
-  // ---- HEART RAIN ----
-  const numHearts = 30; // hearts generated every interval
+  // ---- CONTINUOUS HEART RAIN ----
   const screenWidth = window.innerWidth;
 
   setInterval(() => {
-    for (let j = 0; j < numHearts; j++) {
-      const heart = document.createElement("div");
-      heart.classList.add("heart");
+    const heart = document.createElement("div");
+    heart.classList.add("heart");
 
-      const startX = Math.random() * screenWidth;
-      heart.style.left = `${startX}px`;
+    // Random horizontal start
+    heart.style.left = `${Math.random() * screenWidth}px`;
 
-      const moveX = -50 + Math.random() * 100;
-      heart.style.setProperty("--moveX", `${moveX}px`);
+    // Random size
+    const scale = 0.5 + Math.random() * 1.0;
+    heart.style.width = `${12 * scale}px`;
+    heart.style.height = `${12 * scale}px`;
 
-      const scale = 0.5 + Math.random() * 0.8;
-      heart.style.width = `${12 * scale}px`;
-      heart.style.height = `${12 * scale}px`;
+    // Random pink shade
+    const color = `hsl(330, 100%, ${70 + Math.random() * 20}%)`;
+    heart.style.backgroundColor = color;
 
-      const color = `hsl(330, 100%, ${70 + Math.random() * 20}%)`;
-      heart.style.backgroundColor = color;
+    // Random horizontal movement (-50px to +50px)
+    const moveX = -50 + Math.random() * 100;
+    heart.style.setProperty("--moveX", `${moveX}px`);
 
-      // random speed 3-6s
-      const duration = 3 + Math.random() * 3;
-      heart.style.animationDuration = `${duration}s`;
+    // Random fall duration (3-6s)
+    const duration = 3 + Math.random() * 3;
+    heart.style.animationDuration = `${duration}s`;
 
-      document.body.appendChild(heart);
+    document.body.appendChild(heart);
 
-      // remove heart after animation ends
-      setTimeout(() => heart.remove(), duration * 1000);
-    }
-  }, 500); // spawn new hearts every 0.5s
+    // Remove heart after falling
+    setTimeout(() => heart.remove(), duration * 1000);
+  }, 200); // spawn a heart every 0.2s
 
   // ---- TYPEWRITER EFFECT ----
-  const text = "I love you so much, Prithvi.\nHappy Valentine's Day 💖";
+  const text = "I love you so much, Prithvi.\nHappy Valentine's Day";
   secret.textContent = "";
   let index = 0;
+
   function typeWriter() {
     if (index < text.length) {
       secret.textContent += text[index];
       index++;
-      setTimeout(typeWriter, 100); // typing speed (ms)
+      setTimeout(typeWriter, 100); // typing speed
     }
   }
   typeWriter();
 };
+
 
 </script>
 
