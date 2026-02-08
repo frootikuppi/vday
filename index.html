@@ -19,12 +19,35 @@
   height: 12px;
   background-color: pink;
   transform: rotate(45deg);
-  left: 50%;
   top: -10px;
-  z-index: 20;
   pointer-events: none;
-  animation: fall 4s linear infinite;
+  z-index: 20;
+  animation: fall 4s linear forwards;
 }
+
+.heart::before,
+.heart::after {
+  content: "";
+  position: absolute;
+  width: 12px;
+  height: 12px;
+  background-color: inherit;
+  border-radius: 50%;
+}
+.heart::before { top: -6px; left: 0; }
+.heart::after { left: 6px; top: 0; }
+
+@keyframes fall {
+  0% {
+    transform: translateX(0) translateY(0) rotate(45deg);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(var(--moveX)) translateY(100vh) rotate(45deg);
+    opacity: 0;
+  }
+}
+
 
 /* make hearts look like a heart shape */
 .heart::before,
@@ -337,35 +360,45 @@ document.getElementById("nextBtn").onclick=()=>{
   document.getElementById("vid").play();
 };
 
-/* VIDEO END */
-document.getElementById("vid").onended=()=>{
-  document.getElementById("video").classList.add("hidden");
-  document.getElementById("secret").classList.remove("hidden");
-};
-  function createHearts() {
-  const secret = document.getElementById("secret");
-  for (let j = 0; j < 50; j++) { // number of hearts
-    const heart = document.createElement("div");
-    heart.classList.add("heart");
-    const randX = Math.random(); // random horizontal offset
-    const randScale = 0.5 + Math.random() * 0.8; // random size
-    const randColor = `hsl(330, 100%, ${70 + Math.random()*20}%)`; // different pink shades
-    heart.style.setProperty("--randX", randX);
-    heart.style.width = `${12 * randScale}px`;
-    heart.style.height = `${12 * randScale}px`;
-    heart.style.backgroundColor = randColor;
-    heart.style.setProperty("--hue", randColor);
-    heart.querySelectorAll("::before, ::after"); // pseudo-elements inherit color
-    document.body.appendChild(heart);
-  }
-}
-
-// Trigger hearts when secret message shows
+/* VIDEO END + HEARTS */
 document.getElementById("vid").onended = () => {
+  // Show secret message
   document.getElementById("video").classList.add("hidden");
   document.getElementById("secret").classList.remove("hidden");
+
+  // Create raining hearts
+  function createHearts() {
+    const numHearts = 50;
+    const screenWidth = window.innerWidth;
+
+    for (let j = 0; j < numHearts; j++) {
+      const heart = document.createElement("div");
+      heart.classList.add("heart");
+
+      // Random horizontal starting position
+      const startX = Math.random() * screenWidth;
+      heart.style.left = `${startX}px`;
+
+      // Random horizontal movement during fall (-50px to +50px)
+      const moveX = -50 + Math.random() * 100;
+      heart.style.setProperty("--moveX", `${moveX}px`);
+
+      // Random size
+      const scale = 0.5 + Math.random() * 0.8;
+      heart.style.width = `${12 * scale}px`;
+      heart.style.height = `${12 * scale}px`;
+
+      // Random pink shade
+      const color = `hsl(330, 100%, ${70 + Math.random() * 20}%)`;
+      heart.style.backgroundColor = color;
+
+      document.body.appendChild(heart);
+    }
+  }
+
   createHearts();
 };
+
 
 </script>
 
