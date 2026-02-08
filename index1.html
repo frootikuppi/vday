@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Can We Start?</title>
+
+<style>
+:root{
+  --bg:#ffc1dc;          /* bright pink */
+  --card:#ffd9eb;
+  --text:#4a0036;
+  --glow:#ff4fa3;
+}
+
+body.dark{
+  --bg:#120010;          /* dark pink */
+  --card:rgba(255,80,150,.18);
+  --text:#ffffff;
+  --glow:#ff1f8f;
+}
+
+*{
+  box-sizing:border-box;
+  font-family:Poppins,sans-serif;
+}
+
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--text);
+  overflow:hidden;
+  transition:.4s;
+}
+
+/* TOGGLE */
+.toggle{
+  position:fixed;
+  top:14px;
+  left:16px;
+  background:var(--glow);
+  color:white;
+  border:none;
+  padding:8px 14px;
+  border-radius:18px;
+  cursor:pointer;
+  z-index:10;
+}
+
+/* CARD */
+.card{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  width:600px;
+  height:380px;
+  background:var(--card);
+  backdrop-filter:blur(16px);
+  border-radius:32px;
+  box-shadow:0 0 50px var(--glow);
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  text-align:center;
+  overflow:visible;
+}
+
+/* BUTTONS */
+.buttons{
+  display:flex;
+  gap:20px;
+  margin-top:24px;
+}
+
+button{
+  border:none;
+  border-radius:22px;
+  padding:16px 28px;
+  font-size:1.1rem;
+  cursor:pointer;
+}
+
+#yes{
+  background:var(--glow);
+  color:white;
+  box-shadow:0 0 25px var(--glow);
+}
+
+#no{
+  background:#333;
+  color:white;
+}
+
+/* SIGNATURE */
+.signature{
+  position:fixed;
+  bottom:14px;
+  right:16px;
+  font-size:.85rem;
+  opacity:.75;
+}
+</style>
+</head>
+<body class="dark">
+
+<button class="toggle" onclick="toggleMode()">🌙 / 🌸</button>
+
+<audio id="music1" src="music1.mp3" loop></audio>
+
+<!-- CAN WE START CARD -->
+<div class="card" id="startCard">
+  <h1>Prithvi,<br>Can we start? 🎀</h1>
+  <div class="buttons">
+    <button id="yes">YES 🎀</button>
+    <button id="no">NO ☹️</button>
+  </div>
+</div>
+
+<div class="signature">Made for Prithvi 😛</div>
+
+<script>
+/* MODE TOGGLE */
+function toggleMode(){
+  document.body.classList.toggle("dark");
+}
+
+/* MUSIC ON YES */
+const yesBtn = document.getElementById("yes");
+const noBtn = document.getElementById("no");
+const music1 = document.getElementById("music1");
+
+yesBtn.onclick = () => {
+  music1.play();
+  alert("Music started! 🎵"); // optional feedback
+};
+
+noBtn.onclick = () => {
+  alert("Aww, maybe later 😢"); // optional feedback
+};
+</script>
+
+</body>
+</html>
